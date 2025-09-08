@@ -55,33 +55,38 @@ signal alu_mode : STD_LOGIC_VECTOR(2 downto 0);
 
 begin
 
-alu0: entity work.alu(behavioral) port map(
-in1 => in1,
-in2 => in2,
-alu_mode => alu_mode,
-clk => clk,
-rst => rst,
-result => result,
-z_flag => z_flag,
-n_flag => n_flag
-);
+-- alu0: entity work.alu(behavioral) port map(
+-- in1 => in1,
+-- in2 => in2,
+-- alu_mode => alu_mode,
+-- clk => clk,
+-- rst => rst,
+-- result => result,
+-- z_flag => z_flag,
+-- n_flag => n_flag
+-- );
+
+DUT: alu port map(in1,in2 ,alu_mode,clk,rst,result,z_flag,n_flag);
+
 
 
 process begin
     rst <= '0';
     clk <= '0';
--- Test NOP
-    alu_mode <= "011";
-    in1 <= "0000000000000001";
+    
+    
+	-- Test ADD
+    alu_mode <= "001";
+    in1 <= "0000000000000101";
     in2 <= "0000000000000010";
     
     clk <= '1';
     wait for 10 ns;
     clk <= '0';
     wait for 10 ns;
-    
-    alu_mode <= "011";
-    in1 <= "0000000000000001";
+    -- Test SUB
+    alu_mode <= "010";
+    in1 <= "0000000000000101";
     in2 <= "0000000000000010";
     
     clk <= '1';
@@ -89,31 +94,70 @@ process begin
     clk <= '0';
     wait for 10 ns;
 
--- Test ADD
+-- Test MULT
     alu_mode <= "011";
-    in1 <= "0000000000000010";
-    in2 <= "0000000000000100";
-    
+    in1 <= "0000000000000101";
+    in2 <= "0000000000000010";
+        
     clk <= '1';
     wait for 10 ns;
     clk <= '0';
     wait for 10 ns;
+    
+    -- Test NAND
 
-    alu_mode <= "101";
+    alu_mode <= "100";
+
     in1 <= "0000000000000100";
     in2 <= "0000000000001000";
     
+    
     clk <= '1';
     wait for 10 ns;
     clk <= '0';
     wait for 10 ns;
+    
+    --Test Shift Left
+    
+    alu_mode <= "101";
+    in1 <= "0000000000000001";
+    in2 <= "0000000000000011";
+    
+    clk <= '1';
+    wait for 10 ns;
+    clk <= '0';
+    wait for 10 ns;
+    
+    
+    -- Test Shift Right
+    alu_mode <= "110";
+    in1 <= "0000000000000001";
+    in2 <= "0000000000000011";    
+    
+    clk <= '1';
+    wait for 10 ns;
+    clk <= '0';
+    wait for 10 ns;
+    
+    -- Test TEST
+
+    alu_mode <= "111";
+    in1 <= "0000000000000001";
+    in2 <= "0000000000000010";    
+    
+    clk <= '1';
+    wait for 10 ns;
+    clk <= '0';
+    wait for 10 ns;
+    
+    
 -- Test SUB
 -- Test MUL
 -- Test NAND
 -- Test SHL
 -- Test SHR
 -- Test TEST
-
+	wait;
 end process;
 
 

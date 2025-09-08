@@ -36,7 +36,7 @@ entity alu is
 port (
 	in1,in2 : in STD_LOGIC_VECTOR(15 downto 0);
 	alu_mode : in STD_LOGIC_VECTOR(2 downto 0);
-	clk : in STD_LOGIC;
+	
     rst : in STD_LOGIC;
     
 	result   : out STD_LOGIC_VECTOR(15 downto 0);
@@ -46,64 +46,81 @@ port (
 end alu;
 
 architecture Behavioral of alu is
+    signal z_flag_i,n_flag_i : std_logic := '0';
 
 begin
 
-process(clk)
-
-variable product: std_logic_vector(31 downto 0) := (others => '0');
-variable temp: std_logic_vector(15 downto 0) := (others => '0');
-variable zeros: std_logic_vector(15 downto 0) := (others => '0');
-
-begin
-
-if (rst = '1') then
-    z_flag <= '0';
-    n_flag <= '0';
-    result <= zeros;
+    process(in1,in2,alu_mode,rst)
     
-else 
-
-    if (alu_mode /= "000") then
-        if(alu_mode = "001") then
+    variable product: std_logic_vector(31 downto 0) := (others => '0');
+    variable temp: std_logic_vector(15 downto 0) := (others => '0');
+    variable zeros: std_logic_vector(15 downto 0) := (others => '0');
+    
+        
+    begin
+    
+    if (rst = '1') then
+        z_flag_i <= '0';
+        n_flag_i <= '0';
+        result <= zeros;
+        
+    else 
+        if(alu_mode = "000") then
+            -- NO OP
+            temp := in1;
+            
+        elsif(alu_mode = "001") then
+            -- ADD
             temp := STD_LOGIC_VECTOR(signed(in1) + signed(in2));
             
         elsif(alu_mode = "010") then
+            -- SUB
             temp := STD_LOGIC_VECTOR(signed(in1) - signed(in2));
             
         elsif(alu_mode = "011") then
+            --MULT
             product := STD_LOGIC_VECTOR(signed(in1) * signed(in2));
             temp := product (15 downto 0);
             
         elsif(alu_mode = "100") then
+            -- NAND
             temp := STD_LOGIC_VECTOR(signed(in1) NAND signed(in2));
             
         elsif(alu_mode = "101") then
-             temp := STD_LOGIC_VECTOR(shift_left(signed(in1),1));   --UPDATE TO SHIFT BY AN INPUT VALUE
+             --SHIFT LEFT
+             temp := STD_LOGIC_VECTOR(shift_left(signed(in1),to_integer(signed(in2))));   --UPDATE TO SHIFT BY AN INPUT VALUE
              
         elsif(alu_mode = "110") then
-             temp := STD_LOGIC_VECTOR(shift_right(signed(in1),1));   --UPDATE TO SHIFT BY AN INPUT VALUE   
+            --SHIFT RIGHT
+             temp := STD_LOGIC_VECTOR(shift_right(signed(in1),to_integer(signed(in2))));   --UPDATE TO SHIFT BY AN INPUT VALUE   
              
         elsif(alu_mode = "111") then
+            -- TEST
             temp := in1;
+            
+            if (temp = zeros) then
+                z_flag_i <= '1';
+            else
+                z_flag_i <= '0';
+            end if;
+
+            if (signed(temp) < 0) then
+                n_flag_i <= '1';
+            else
+                n_flag_i <= '0';
+            end if;            
             
         else 
             temp := zeros;
-    
         end if;
-    end if;
+             
+        result <= temp;
 
-    result <= temp;
-
-    if (temp = zeros) then
-        z_flag <= '1';
-    else
-        z_flag <= '0';
+           
     end if;
     
-    n_flag <= STD_LOGIC(temp(15));
-       
-end if;
+n_flag <= n_flag_i;
+z_flag <= z_flag_i;
 end process;
     
 
