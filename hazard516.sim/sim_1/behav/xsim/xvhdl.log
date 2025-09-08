@@ -1,4 +1,0 @@
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/kroeze/hazard516/hazard516.srcs/sources_1/new/alu.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity alu
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/kroeze/hazard516/hazard516.srcs/sources_1/new/alu_testbench.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity alu_testbench

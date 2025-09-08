@@ -1,7 +1,0 @@
-# compile vhdl design source files
-vhdl xil_defaultlib  \
-"../../../../hazard516.srcs/sources_1/new/alu.vhd" \
-"../../../../hazard516.srcs/sources_1/new/alu_testbench.vhd" \
-
-# Do not sort compile order
-nosort
